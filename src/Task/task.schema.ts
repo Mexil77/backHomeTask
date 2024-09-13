@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, now } from 'mongoose';
 
-export type TaskDocument = TaskSchemaClass & Document;
+export type TaskDocument = Task & Document;
 
-@Schema()
+@Schema({ _id: false })
 class Recurrent {
   @Prop()
   active: boolean;
@@ -13,7 +13,7 @@ class Recurrent {
 }
 
 @Schema()
-export class TaskSchemaClass {
+export class Task {
   @Prop()
   name: string;
 
@@ -27,10 +27,13 @@ export class TaskSchemaClass {
   dateToDone: Date;
 
   @Prop()
-  daysToDone: number;
-
-  @Prop()
   recurrent: Recurrent;
+
+  @Prop({ default: now() })
+  createdAt: Date;
+
+  @Prop({ default: now() })
+  updatedAt: Date;
 }
 
-export const TaskSchema = SchemaFactory.createForClass(TaskSchemaClass);
+export const TaskSchema = SchemaFactory.createForClass(Task);
